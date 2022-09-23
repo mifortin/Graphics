@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEditor.GraphToolsFoundation.Overdrive;
 using UnityEngine;
-using UnityEngine.GraphToolsFoundation.CommandStateObserver;
+using Unity.CommandStateObserver;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
@@ -13,7 +12,7 @@ namespace UnityEditor.ShaderGraph.GraphUI
     /// <summary>
     ///  Visual element used to contain and display the rendering output of the graph as a whole
     /// </summary>
-    public class MainPreviewView : VisualElement
+    class MainPreviewView : VisualElement
     {
         Image m_PreviewTextureImage;
 

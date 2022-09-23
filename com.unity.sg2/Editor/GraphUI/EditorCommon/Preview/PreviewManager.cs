@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.GraphToolsFoundation.Overdrive;
+using Unity.GraphToolsFoundation.Editor;
 using UnityEditor.ShaderGraph.GraphDelta;
-using UnityEngine.GraphToolsFoundation.Overdrive;
+using Unity.GraphToolsFoundation;
 using UnityEngine;
 
 namespace UnityEditor.ShaderGraph.GraphUI
@@ -235,7 +235,7 @@ namespace UnityEditor.ShaderGraph.GraphUI
             }
         }
 
-        public void OnNodeAdded(String nodeName, SerializableGUID nodeGuid)
+        void OnNodeAdded(String nodeName, SerializableGUID nodeGuid)
         {
             if (m_NodeLookupTable.ContainsKey(nodeName))
                 return;
