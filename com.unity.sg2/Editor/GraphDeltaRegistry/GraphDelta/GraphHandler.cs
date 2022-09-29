@@ -16,24 +16,28 @@ namespace UnityEditor.ShaderGraph.GraphDelta
     {
         internal GraphDelta graphDelta;
         internal Registry registry;
+        private bool initialized;
 
         [Obsolete("The empty constructer for GraphHandler is obselete; please provide a Registry for updated behavior", false)]
         public GraphHandler()
         {
             graphDelta = new GraphDelta();
             registry = null;
+            initialized = false;
         }
 
         public GraphHandler(Registry registry)
         {
             graphDelta = new GraphDelta();
             this.registry = registry;
+            initialized = false;
         }
 
         public GraphHandler(string serializedData, Registry registry)
         {
             graphDelta = new GraphDelta(serializedData);
             this.registry = registry;
+            initialized = false;
         }
 
         static public GraphHandler FromSerializedFormat(string json, Registry registry)
@@ -150,34 +154,38 @@ namespace UnityEditor.ShaderGraph.GraphDelta
         }
 
 
-        public void ReconcretizeAll()
+        public void ReconcretizeAll(bool force = false)
         {
-            foreach(var name in GraphHandlerUtils.GetNodesTopologically(this))
+            if (!force && !initialized)
             {
-                var node = GetNode(name);
-                if (node != null)
+                foreach (var name in GraphHandlerUtils.GetNodesTopologically(this))
                 {
-                    var builder = registry.GetNodeBuilder(node.GetRegistryKey());
-                    try
+                    var node = GetNode(name);
+                    if (node != null)
                     {
-                        if (builder != null)
+                        var builder = registry.GetNodeBuilder(node.GetRegistryKey());
+                        try
                         {
-                            if (builder.GetRegistryFlags() == RegistryFlags.Func)
+                            if (builder != null)
                             {
-                                ReconcretizeNodeNoPropagation(node.ID.FullPath);
-                            }
+                                if (builder.GetRegistryFlags() == RegistryFlags.Func)
+                                {
+                                    ReconcretizeNodeNoPropagation(node.ID.FullPath);
+                                }
 
-                            if (builder.GetRegistryKey().Name == ContextBuilder.kRegistryKey.Name)
-                            {
-                                ReconcretizeNodeNoPropagation(node.ID.FullPath);
+                                else if (builder.GetRegistryKey().Name == ContextBuilder.kRegistryKey.Name)
+                                {
+                                    ReconcretizeNodeNoPropagation(node.ID.FullPath);
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
                     }
                 }
+                initialized = true;
             }
         }
 
